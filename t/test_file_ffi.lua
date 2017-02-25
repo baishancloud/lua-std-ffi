@@ -1,8 +1,7 @@
-package.path = '../?.lua;' .. package.path
-package.cpath = './?.so;' .. package.cpath
+package.path = '../lib/?.lua;' .. package.path
 
 local bit = require('numberlua')
-local file_ffi = require('file_ffi')
+local file_ffi = require('std_ffi.file')
 
 local TEST_FILE_PATH = "/tmp/test_file_ffi"
 

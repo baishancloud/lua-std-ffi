@@ -1,5 +1,5 @@
 local ffi = require("ffi")
-local errno = require("errno")
+local errno = require("std_ffi.errno")
 
 local ffi_new = ffi.new
 local ffi_str = ffi.string
