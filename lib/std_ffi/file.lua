@@ -218,7 +218,7 @@ function _M.write_with_retry(self, data, retry_count)
         end
 
         local written, err_code, err_msg = _M.write(self, to_write)
-        if written < 0 then
+        if err_code ~= nil then
             return nil, err_code, err_msg
         end
 
