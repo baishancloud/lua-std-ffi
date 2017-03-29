@@ -192,6 +192,36 @@ function test_open_permissions()
     end
 end
 
+function test_read_to_end()
+
+    local cases = {
+        {'test_read_to_end_1', 10,  0,  0},
+        {'test_read_to_end_2', 10,  1,  1},
+        {'test_read_to_end_3', 10,  7,  7},
+        {'test_read_to_end_4', 10, 10, 10},
+        {'test_read_to_end_5', 10, 11, 10},
+        {'test_read_to_end_6', 10, 20, 10},
+    }
+
+    print('test_read_to_end:')
+    for _, case in ipairs(cases) do
+        local test_name, to_read_bytes, data_bytes, read_bytes = unpack(case)
+
+        local data = create_buf(data_bytes)
+
+        local f = open_test_file(bit.bor(file_ffi.O_CREAT, file_ffi.O_WRONLY))
+        write_with_assert(f, data)
+
+        f = open_test_file(file_ffi.O_RDONLY)
+        local buf, err_code, err_msg = f:read(to_read_bytes)
+        assert(type(buf) == 'string' and nil == err_code)
+        assert(#buf == read_bytes, #buf .. ' ~= ' .. read_bytes)
+
+        os.remove(TEST_FILE_PATH)
+        print(test_name, " OK")
+    end
+end
+
 function test_read_and_write()
 
     local cases = {
@@ -420,6 +450,7 @@ test_open_rw()
 test_open_size()
 test_open_time()
 test_open_permissions()
+test_read_to_end()
 test_read_and_write()
 test_pread_and_pwrite()
 test_write_sync()
