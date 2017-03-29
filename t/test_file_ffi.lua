@@ -303,11 +303,18 @@ function test_seek()
     local write_data = create_buf(40)
 
     local cases = {
-        {'test_seek_front', file_ffi.SEEK_SET, 10, 10},
-        {'test_seek_curr', file_ffi.SEEK_CUR, 100, #write_data+100},
-        {'test_seek_end', file_ffi.SEEK_END, 100, #prepare_data+100},
+        {'test_seek_^->', file_ffi.SEEK_SET,    10, 10},
+        {'test_seek_^--', file_ffi.SEEK_SET,     0, 0},
+        {'test_seek_^<-', file_ffi.SEEK_SET,   -10, nil},
+        {'test_seek_.->', file_ffi.SEEK_CUR,   100, #write_data+100},
+        {'test_seek_.--', file_ffi.SEEK_CUR,     0, #write_data},
+        {'test_seek_.<-', file_ffi.SEEK_CUR,   -10, #write_data-10},
+        {'test_seek_$->', file_ffi.SEEK_END,   100, #prepare_data+100},
+        {'test_seek_$--', file_ffi.SEEK_END,     0, #prepare_data},
+        {'test_seek_$<-', file_ffi.SEEK_END,  -100, #prepare_data-100},
     }
 
+    print('test_seek:')
     for _, case in ipairs(cases) do
         local test_name, flag, position, expect_offset = case[1], case[2], case[3], case[4]
 
@@ -316,7 +323,8 @@ function test_seek()
         write_with_assert(f, write_data)
 
         local offset = f:seek(position, flag)
-        assert(expect_offset == offset)
+        assert(expect_offset == offset,
+               'expect: ' .. tostring(expect_offset) .. ' == offset: ' .. tostring(offset))
 
         print(test_name, " OK")
     end
