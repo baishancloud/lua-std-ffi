@@ -25,6 +25,7 @@ function create_buf(size)
 
     while #buf*2 < size do
         buf = buf .. buf
+        collectgarbage()
     end
 
     remained = buf
@@ -37,6 +38,7 @@ function create_buf(size)
 
     buf = buf .. prev
 
+    collectgarbage()
     return string.sub(buf, 1, size)
 end
 
@@ -122,11 +124,11 @@ function test_open_size()
 end
 
 function test_open_time()
-    local data = create_buf(50*1024*1024)
+    local data = create_buf(150*1024*1024)
 
     local cases = {
-        {'test_nosync', nil, 0, 3},
-        {'test_noblock', file_ffi.O_NONBLOCK, 0, 3},
+        {'test_nosync', nil, 0, 5},
+        {'test_noblock', file_ffi.O_NONBLOCK, 0, 5},
         {'test_data_sync', file_ffi.O_DSYNC, 1, 20},
         {'test_sync', file_ffi.O_SYNC, 1, 20},
     }
@@ -297,10 +299,10 @@ function test_write_sync()
         {'test_fdatasync', 1, 20},
     }
 
-    local data = create_buf(100*1024*1024)
+    local data = create_buf(150*1024*1024)
 
     for _, case in ipairs(cases) do
-        local test_name, min_ts, max_ts = case[1], case[2], case[3]
+        local test_name, min_tm, max_tm = case[1], case[2], case[3]
 
         local f = open_test_file(bit.bor(file_ffi.O_CREAT, file_ffi.O_RDWR))
 
@@ -308,7 +310,7 @@ function test_write_sync()
         write_with_assert(f, data)
         local use_tm = os.time() - start_tm
 
-        assert(use_tm < 3)
+        assert(use_tm < 5)
 
         start_tm = os.time()
         if test_name == 'test_fsync' then
@@ -319,8 +321,8 @@ function test_write_sync()
         use_tm = os.time() - start_tm
 
         assert(res == nil and err_code == nil)
-        assert(use_tm > min_ts)
-        assert(use_tm < max_ts)
+        assert(use_tm > min_tm)
+        assert(use_tm < max_tm)
 
         os.remove(TEST_FILE_PATH)
         print(test_name, " OK")
