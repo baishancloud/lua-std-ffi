@@ -145,7 +145,8 @@ function test_open_time()
         write_with_assert(f, data)
         local use_tm = os.time() - start_tm
 
-        assert(min_tm <= use_tm and use_tm < max_tm)
+        assert(min_tm <= use_tm)
+        assert(use_tm < max_tm)
 
         os.remove(TEST_FILE_PATH)
         print(test_name, " OK")
@@ -318,7 +319,8 @@ function test_write_sync()
         use_tm = os.time() - start_tm
 
         assert(res == nil and err_code == nil)
-        assert(use_tm > min_ts and use_tm < max_ts)
+        assert(use_tm > min_ts)
+        assert(use_tm < max_ts)
 
         os.remove(TEST_FILE_PATH)
         print(test_name, " OK")
