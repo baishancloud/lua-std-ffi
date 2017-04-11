@@ -125,10 +125,10 @@ function test_open_time()
     local data = create_buf(50*1024*1024)
 
     local cases = {
-        {'test_nosync', nil, 0, 1},
-        {'test_noblock', file_ffi.O_NONBLOCK, 0, 1},
-        {'test_data_sync', file_ffi.O_DSYNC, 1, 10},
-        {'test_sync', file_ffi.O_SYNC, 1, 10},
+        {'test_nosync', nil, 0, 3},
+        {'test_noblock', file_ffi.O_NONBLOCK, 0, 3},
+        {'test_data_sync', file_ffi.O_DSYNC, 1, 20},
+        {'test_sync', file_ffi.O_SYNC, 1, 20},
     }
 
     for _, case in ipairs(cases) do
@@ -292,8 +292,8 @@ end
 function test_write_sync()
 
     local cases = {
-        {'test_fsync', 1, 10},
-        {'test_fdatasync', 1, 10},
+        {'test_fsync', 1, 20},
+        {'test_fdatasync', 1, 20},
     }
 
     local data = create_buf(100*1024*1024)
@@ -307,7 +307,7 @@ function test_write_sync()
         write_with_assert(f, data)
         local use_tm = os.time() - start_tm
 
-        assert(use_tm < 1)
+        assert(use_tm < 3)
 
         start_tm = os.time()
         if test_name == 'test_fsync' then
