@@ -122,6 +122,8 @@ end
 
 function _M.write(self, data)
     local written = C.write(self.fhandle.fd, data, #data)
+    local written = tonumber(written)
+
     if written < 0 then
         return _error()
     end
@@ -131,6 +133,8 @@ end
 
 function _M.pwrite(self, data, offset)
     local written = C.pwrite(self.fhandle.fd, data, #data, offset)
+    local written = tonumber(written)
+
     if written < 0 then
         return _error()
     end
@@ -160,6 +164,8 @@ function _M.read(self, size)
     local buf = ffi_new("char[?]", size)
 
     local read = C.read(self.fhandle.fd, buf, size)
+    local read = tonumber(read)
+
     if read < 0 then
         return _error()
     end
@@ -171,6 +177,8 @@ function _M.pread(self, size, offset)
     local buf = ffi_new("char[?]", size)
 
     local read = C.pread(self.fhandle.fd, buf, size, offset)
+    local read = tonumber(read)
+
     if read < 0 then
         return _error()
     end
@@ -180,6 +188,8 @@ end
 
 function _M.seek(self, offset, whence)
     local off = C.lseek(self.fhandle.fd, offset, whence)
+    local off = tonumber(off)
+
     if off < 0 then
         return _error()
     end
