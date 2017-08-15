@@ -449,6 +449,35 @@ function test_close_by_collectgarbage()
     print("test_close_by_collectgarbage", " OK")
 end
 
+function test_link()
+
+    local flags = bit.bor(file_ffi.O_CREAT, file_ffi.O_WRONLY)
+
+    local f, err_code, err_msg = file_ffi:open(TEST_FILE_PATH, flags)
+    assert(f ~= nil and err_code == nil)
+
+    local link_path = TEST_FILE_PATH .. '_link'
+
+    local res, err_code, err_msg = file_ffi:link(TEST_FILE_PATH, link_path)
+    assert(err_code == nil)
+
+    local data = 'ssssssssssssss'
+
+    write_with_assert(f, data)
+
+    local fl, err_code, err_msg = file_ffi:open(link_path, file_ffi.O_RDONLY)
+    assert(fl ~= nil and err_code == nil)
+
+    local buf, err_code, err_msg = fl:pread(#data, 0)
+    assert(buf == data and err_code == nil)
+
+    os.remove(TEST_FILE_PATH)
+    os.remove(link_path)
+
+    print("test_link", " OK")
+end
+
+
 os.remove(TEST_FILE_PATH)
 test_open_rw()
 test_open_size()
@@ -462,3 +491,4 @@ test_seek()
 test_write_with_retry()
 test_close()
 test_close_by_collectgarbage()
+test_link()

@@ -68,6 +68,8 @@ int64_t pread(int fd, void *buf, size_t count, off_t offset);
 int umask(int cmask);
 char *strerror(int errnum);
 
+int link(const char *oldpath, const char *newpath);
+
 ]]
 
 local fhandle_t = ffi.metatype("fhandle_t", {})
@@ -234,6 +236,16 @@ function _M.write_with_retry(self, data, retry_count)
 
         has_written = has_written + written
         i = i + 1
+    end
+
+    return nil, nil, nil
+end
+
+function _M.link(_, oldpath, newpath)
+
+    local ret = C.link(oldpath, newpath)
+    if ret < 0 then
+        return _error()
     end
 
     return nil, nil, nil
