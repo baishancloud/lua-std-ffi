@@ -224,4 +224,49 @@ function _M.link(_, oldpath, newpath)
     return nil, nil, nil
 end
 
+function _M.stat(_, path)
+    local buf = ffi.new('struct stat')
+
+    local ret = C.__xstat(1, path, buf)
+    if ret < 0 then
+        return _error()
+    end
+
+    local file_stat = {
+        st_dev = tonumber(buf.st_dev),
+        st_ino = tonumber(buf.st_ino),
+        st_nlink = tonumber(buf.st_nlink),
+        st_mode = tonumber(buf.st_mode),
+        st_uid = tonumber(buf.st_uid),
+        st_gid = tonumber(buf.st_gid),
+        st_rdev = tonumber(buf.st_rdev),
+        st_size = tonumber(buf.st_size),
+        st_blksize = tonumber(buf.st_blksize),
+        st_blocks = tonumber(buf.st_blocks),
+        st_atim = {
+            tv_sec = tonumber(buf.st_atim.tv_sec),
+            tv_nsec = tonumber(buf.st_atim.tv_nsec),
+        },
+        st_mtim = {
+            tv_sec = tonumber(buf.st_mtim.tv_sec),
+            tv_nsec = tonumber(buf.st_mtim.tv_nsec),
+        },
+        st_ctim = {
+            tv_sec = tonumber(buf.st_ctim.tv_sec),
+            tv_nsec = tonumber(buf.st_ctim.tv_nsec),
+        },
+    }
+
+    return file_stat, nil, nil
+end
+
+function _M.access(_, path, amode)
+    local ret = C.access(path, amode)
+    if ret < 0 then
+        return _error()
+    end
+
+    return ret, nil, nil
+end
+
 return _M

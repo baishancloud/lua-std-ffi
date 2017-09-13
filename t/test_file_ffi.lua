@@ -477,6 +477,31 @@ function test_link()
     print("test_link", " OK")
 end
 
+function test_stat()
+    local f = io.open(TEST_FILE_PATH, 'w+')
+    assert(f ~= nil)
+
+    local file_stat, err, errmsg = file_ffi:stat(TEST_FILE_PATH)
+    assert(type(file_stat) == 'table')
+
+    os.remove(TEST_FILE_PATH)
+
+    print("test_stat", " OK")
+end
+
+function test_access()
+    local _, err, errmsg = file_ffi:access(TEST_FILE_PATH, 0)
+    assert(err ~= nil)
+
+    local f = io.open(TEST_FILE_PATH, 'w+')
+
+    local _, err, errmsg = file_ffi:access(TEST_FILE_PATH, 0)
+    assert(err == nil)
+
+    os.remove(TEST_FILE_PATH)
+
+    print("test_access", " OK")
+end
 
 os.remove(TEST_FILE_PATH)
 test_open_rw()
@@ -492,3 +517,5 @@ test_write_with_retry()
 test_close()
 test_close_by_collectgarbage()
 test_link()
+test_stat()
+test_access()

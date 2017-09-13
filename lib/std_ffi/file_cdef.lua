@@ -4,6 +4,29 @@ local _M = {}
 _M.cdef = [[
 typedef int64_t off_t;
 typedef struct { int fd; } fhandle_t;
+struct timespec
+{
+    long int tv_sec;
+    long int tv_nsec;
+};
+struct stat
+{
+    unsigned long int st_dev;
+    unsigned long int st_ino;
+    unsigned long int st_nlink;
+    unsigned int st_mode;
+    unsigned int st_uid;
+    unsigned int st_gid;
+    int __pad0;
+    unsigned long int st_rdev;
+    long int st_size;
+    long int st_blksize;
+    long int st_blocks;
+    struct timespec st_atim;
+    struct timespec st_mtim;
+    struct timespec st_ctim;
+    long int __unused[3];
+};
 
 
 int open(const char *pathname, int flags, int mode);
@@ -24,6 +47,9 @@ char *strerror(int errnum);
 
 int link(const char *oldpath, const char *newpath);
 int stat(const char *restrict path, const char *restrict buf);
+
+int __xstat(int ver, const char *path, struct stat *buf);
+int access(const char *path, int amode);
 ]]
 
 
