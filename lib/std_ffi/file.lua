@@ -269,4 +269,38 @@ function _M.access(_, path, amode)
     return ret, nil, nil
 end
 
+function _M.readdir(_, path)
+    local dirp = C.opendir(path)
+    if dirp == nil then
+        return _error()
+    end
+
+    local entrys = {}
+
+    while true  do
+        local dir_entry = C.readdir(dirp)
+        if dir_entry == nil then
+            break
+        end
+
+        local entry = {
+            d_ino = tonumber(dir_entry.d_ino),
+            d_off = tonumber(dir_entry.d_off),
+            d_reclen = tonumber(dir_entry.d_reclen),
+            d_type = tonumber(dir_entry.d_type),
+            d_name = ffi_str(dir_entry.d_name),
+        }
+
+        table.insert(entrys, entry)
+    end
+
+    local ret = C.closedir(dirp)
+    if ret < 0 then
+        return _error()
+    end
+
+    return entrys, nil, nil
+end
+
+
 return _M

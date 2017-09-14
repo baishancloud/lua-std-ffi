@@ -27,6 +27,14 @@ struct stat
     struct timespec st_ctim;
     long int __unused[3];
 };
+struct dirent
+{
+    unsigned long int d_ino;
+    long int d_off;
+    unsigned short int d_reclen;
+    unsigned char d_type;
+    char d_name[256];
+};
 
 
 int open(const char *pathname, int flags, int mode);
@@ -50,6 +58,9 @@ int stat(const char *restrict path, const char *restrict buf);
 
 int __xstat(int ver, const char *path, struct stat *buf);
 int access(const char *path, int amode);
+void *opendir(const char *name);
+int closedir(void *dirp);
+struct dirent *readdir(void *dirp);
 ]]
 
 
